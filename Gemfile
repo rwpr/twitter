@@ -24,6 +24,8 @@ gem 'mini_magick'
 gem 'twitter'
 gem 'byebug'
 
+gem 'omniauth-twitter'
+
 group :test do
   gem 'rspec'
 end

@@ -1,10 +1,117 @@
 <div class = "container">
-<h3> Let's stalk! </h3>
+	<h3> Let's tweeeeeeeeet! </h3>
 
-<form action="/" method="post">
-	<label>Username: </label>
-	<input type="text" name='username'>
-	<input type="submit" value="let's go">
-</form>
+	<% if session[:username].nil? %>
+		<a href="/login"><input class="login" type="submit" value="Login"></a>
+		<a href="/logout"><input class="logout" type="submit" value="Logout"></a></a>
+	<% else %> 
+		<p> Hola <%= current_user.username %>! </p>
+		<form id="new_tweet" action="/tweets" method="post">
+			<!-- <label>Username: </label>
+			<input type="text" name="<" placeholder ="your username"> -->
+			<label>Post a tweet: </label>
+		    <input type="text" name="newtweet" placeholder ="new tweet here">
+		    <input id="newtweetbutton" type="submit" value="let's post">
+		  </form>
 
+		<!-- <div id="wait-msg"> -->
+		<div id="ajax_loader" style="display:none;">
+			<img src="/images/ajax-loader.gif"> Updating</img>
+		</div>
+
+		<div id="tweets">
+		</div>
+	<% end %>
 </div>
+
+
+<script>
+$(document).ready(function() {
+  $('#tweets').submit(function(e){
+    // When loading, off the button, disable it
+    $('#newtweetbutton').attr('disabled',true);
+    var tweet = $("#new_tweet").serialize();
+    e.preventDefault();
+    $('#ajax_loader').show();
+    $.ajax({
+        type: "POST",
+        url: "/tweets",
+        data: newtweet,
+        success: function(response){
+          // alert("success");
+          $('#tweets').html(response);
+           $('#newtweetbutton').attr('disabled',false);
+        },
+        error: function(){
+          alert("Error");
+        },
+        complete: function(){
+          $('#ajax_loader').hide();
+           $('#newtweetbutton').attr('disabled',false);
+        }
+    });
+  });
+});
+</script>
+
+<!-- 
+// $(document).ready(function(){ 
+//     function populate_tweets(){
+//     	console.log("test")
+//     	$.ajax({
+// 			url:'/<%= @username %>',
+// 			type: "GET",
+// 			success:function(result)
+// 			{
+// 			  $("#loading").html(result);
+// 			  $("#wait-msg").hide();
+// 			},
+// 			error: function(jqXHR, textStatus, errorThrown) 
+// 			{
+// 			  $("#wait-msg").hide();
+// 			}
+// 		});
+//     };
+
+//     $("#tweets").submit(function(event){ 
+//         console.log("test1")
+//         $('#button').attr('disabled', 'disabled');
+//         $('#wait-msg').show();
+//         $('#wait-msg').append("<img src='images/ajax-loader.gif'>Updating</img>")
+//         // $("#wait-msg").show();
+//         // var postData = $(this).serializeArray();
+//         var formURL = $(this).attr("action");
+//         $.ajax({
+//           url : formURL,
+//           type: "POST",
+//           data : $("#send-tweet").serialize(),
+//           success:function(result){
+//             $("#loading").html('Tweeting');
+//             populate_tweets();
+//             // document.getElementById("post_tweet").reset();
+//           },
+//           error: function(jqXHR, textStatus, errorThrown){
+//             $("#loading").html('Tweet Failed');
+//           }
+//         });
+//         event.preventDefault(); //STOP default action
+//       });
+
+	// $('#tweets').one("submit",function(e){
+	// 	e.preventDefault();
+	// 	$('#button').attr('disabled', 'disabled');
+	// 	$('#loading').append("<img src='images/ajax-loader.gif'>Updating</img>")		
+	// 	$.ajax({
+	// 	    type: "POST",
+	// 	    url: "/tweets",
+	// 	    data: $("#send-tweet").serialize(),
+	// 	    cache: false,
+	// 	    success: function(value){
+	// 		      $("#loading").html("<h1>Tweet Posted!</h1>");
+	// 		    },
+	// 		error: function (value){ 
+	// 		      $("#loading").html("<h1>Failed</h1>");
+	// 		    }
+	// 	});
+	// });
+ -->
