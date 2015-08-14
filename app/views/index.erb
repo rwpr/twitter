@@ -14,11 +14,24 @@
 		    <input id="newtweetbutton" type="submit" value="let's post">
 		  </form>
 
+		<form id="tweet_later" action="/tweets_later" method="post">
+			<!-- <label>Username: </label>
+			<input type="text" name="<" placeholder ="your username"> -->
+			<label>Post a tweet: </label>
+		    <input type="text" name="tweetlater" placeholder ="new delayed tweet here">
+		    <label>Delay time: </label>
+		    <input type="number" name="time" placeholder ="5" min="0" step="1" size="3">
+		    <input id="newtweetbutton" type="submit" value="let's post">
+		  </form>
+
+		<div id="status"></div>
+
 		<!-- <div id="wait-msg"> -->
 		<div id="ajax_loader" style="display:none;">
 			<img src="/images/ajax-loader.gif"> Updating</img>
 		</div>
 
+		<div id="tweeting"></div>
 		<div id="tweets">
 		</div>
 	<% end %>
@@ -27,30 +40,70 @@
 
 <script>
 $(document).ready(function() {
-  $('#tweets').submit(function(e){
+
+  $('#new_tweet').submit(function(e){
     // When loading, off the button, disable it
     $('#newtweetbutton').attr('disabled',true);
     var tweet = $("#new_tweet").serialize();
     e.preventDefault();
     $('#ajax_loader').show();
+  
     $.ajax({
         type: "POST",
         url: "/tweets",
-        data: newtweet,
+        data: tweet,
+        dataType: "json",
         success: function(response){
-          // alert("success");
-          $('#tweets').html(response);
+          $('#ajax_loader').hide();
            $('#newtweetbutton').attr('disabled',false);
+         
+             $('#tweets').append(response.desc)
         },
         error: function(){
           alert("Error");
-        },
-        complete: function(){
-          $('#ajax_loader').hide();
-           $('#newtweetbutton').attr('disabled',false);
         }
     });
   });
+
+  $('#tweet_later').submit(function(e){
+  	console.log("test2")
+  	$('#newtweetbutton').attr('disabled',true);
+  	var tweet = $("#tweet_later").serialize();
+
+  	e.preventDefault();
+  	$('#ajax_loader').show();
+  	$.ajax({
+        type: "POST",
+        url: "/tweets_later",
+        data: tweet,
+        dataType: "json",
+        success: function(result){
+          $('#ajax_loader').hide();
+          $('#newtweetbutton').attr('disabled',false);
+          $('#tweets').append(result["tweet"].desc)
+          $("#tweeting").html('Tweeting...');
+          check_job_status(result.job_id)
+        },
+        error: function(jqXHR, textStatus, errorThrown){ $("#tweets").html('Tweet Failed'); }
+    });
+  });
+
+  function check_job_status(job_id){
+      $.ajax({
+        type: "GET",
+        url: '/status/' + job_id
+      }).done(function(response){
+      	console.log("test3")
+        if (response === 'true')
+        { $("#tweeting").html('Tweeted!') }
+        else 
+        {
+          setTimeout(function(){ check_job_status(job_id) }, 3000);
+        }
+      });
+    };
+
+
 });
 </script>
 

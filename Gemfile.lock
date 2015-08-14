@@ -26,7 +26,10 @@ GEM
       activesupport (>= 3.2.0)
       json (>= 1.7)
       mime-types (>= 1.16)
+    celluloid (0.16.1)
+      timers (~> 4.0.0)
     columnize (0.9.0)
+    connection_pool (2.2.0)
     daemons (1.2.3)
     diff-lcs (1.2.5)
     equalizer (0.0.11)
@@ -36,6 +39,7 @@ GEM
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     hashie (3.4.2)
+    hitimes (1.2.2)
     http (0.6.4)
       http_parser.rb (~> 0.6.0)
     http_parser.rb (0.6.0)
@@ -66,6 +70,9 @@ GEM
     rack-test (0.6.3)
       rack (>= 1.0)
     rake (10.4.2)
+    redis (3.2.1)
+    redis-namespace (1.5.2)
+      redis (~> 3.0, >= 3.0.4)
     rspec (3.3.0)
       rspec-core (~> 3.3.0)
       rspec-expectations (~> 3.3.0)
@@ -81,6 +88,12 @@ GEM
     rspec-support (3.3.0)
     shotgun (0.9.1)
       rack (>= 1.0)
+    sidekiq (3.4.2)
+      celluloid (~> 0.16.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      json (~> 1.0)
+      redis (~> 3.2, >= 3.2.1)
+      redis-namespace (~> 1.5, >= 1.5.2)
     simple_oauth (0.3.1)
     sinatra (1.4.6)
       rack (~> 1.4)
@@ -99,6 +112,8 @@ GEM
       rack (~> 1.0)
     thread_safe (0.3.5)
     tilt (2.0.1)
+    timers (4.0.1)
+      hitimes
     twitter (5.14.0)
       addressable (~> 2.3)
       buftok (~> 0.2.0)
@@ -126,8 +141,10 @@ DEPENDENCIES
   omniauth-twitter
   pg
   rake
+  redis
   rspec
   shotgun
+  sidekiq
   sinatra
   sinatra-contrib
   thin

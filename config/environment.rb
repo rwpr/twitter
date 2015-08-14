@@ -24,6 +24,9 @@ require 'byebug'
 require 'omniauth-twitter'
 require 'yaml'
 
+require 'sidekiq'
+require 'redis'
+require 'sidekiq/api'
 
 # Some helper constants for path-centric logic
 APP_ROOT = Pathname.new(File.expand_path('../../', __FILE__))
@@ -33,10 +36,18 @@ APP_NAME = APP_ROOT.basename.to_s
 # Set up the controllers and helpers
 Dir[APP_ROOT.join('app', 'controllers', '*.rb')].each { |file| require file }
 Dir[APP_ROOT.join('app', 'helpers', '*.rb')].each { |file| require file }
+Dir[APP_ROOT.join('app', 'workers', '*.rb')].each { |file| require file }
 
 # Set up the database and models
 require APP_ROOT.join('config', 'database')
 
+# For Heroku production with terminal set up
+# heroku config:set twitter_consumer_key_id=cBRMA4SEUquwvBWeDmtYSBDHc
+# heroku config:set twitter_consumer_secret_key_id=ephH3FpEunz8giGxvimkNW9t7MKIp9HnCo4F0cQsNtrPk5HTOI
+# heroku logs 
+# heroku login
+# heroku logout (imf*)
+# rename heroku app: heroku apps: rename name-app
 if Sinatra::Base.development?
 	API_KEYS = YAML::load(File.open('config/app.yaml'))
 else
